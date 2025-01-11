@@ -11,7 +11,8 @@
     "nodemon": "^3.1.9"
   },
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "build":"npm i"
   },
   "name": "taskbackend",
   "version": "1.0.0",
