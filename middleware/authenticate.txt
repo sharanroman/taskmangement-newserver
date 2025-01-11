@@ -1,0 +1,31 @@
+const jwt = require("jsonwebtoken");
+
+// Token generation function
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user.id, role: user.role },  // Payload
+    process.env.JWT_SECRET || "mySecretKey",  // Secret
+    { expiresIn: '365d' }  // Optional: Set a very long expiration or no expiration
+  );
+};
+
+// Authentication middleware
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "mySecretKey");
+    console.log("Decoded token:", decoded);  // For debugging
+    req.userId = decoded.id;  // Store the user ID from the token
+    req.user = decoded;  // Store the whole decoded token for easy access to role
+    next();
+  } catch (error) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+};
+
+module.exports = { authenticate, generateToken };
